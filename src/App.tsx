@@ -15,19 +15,19 @@ export default function App() {
   const MAX_CHARACTERS = 5000;
 
   const languages = [
-    { code: 'en', name: (t('languages') as unknown as { en: string }).en },
-    { code: 'es', name: (t('languages') as unknown as { es: string }).es },
-    { code: 'fr', name: (t('languages') as unknown as { fr: string }).fr },
-    { code: 'de', name: (t('languages') as unknown as { de: string }).de },
-    { code: 'it', name: (t('languages') as unknown as { it: string }).it },
-    { code: 'pt', name: (t('languages') as unknown as { pt: string }).pt },
+    { code: 'en', name: (t('languages') as unknown as { en: string }).en, flag: '🇺🇸' },
+    { code: 'es', name: (t('languages') as unknown as { es: string }).es, flag: '🇪🇸' },
+    { code: 'fr', name: (t('languages') as unknown as { fr: string }).fr, flag: '🇫🇷' },
+    { code: 'de', name: (t('languages') as unknown as { de: string }).de, flag: '🇩🇪' },
+    { code: 'it', name: (t('languages') as unknown as { it: string }).it, flag: '🇮🇹' },
+    { code: 'pt', name: (t('languages') as unknown as { pt: string }).pt, flag: '🇵🇹' },
   ];
 
   const uiLanguageNames = {
-    en: 'English',
-    es: 'Español',
-    fr: 'Français',
-    de: 'Deutsch',
+    en: { name: 'English', flag: '🇺🇸' },
+    es: { name: 'Español', flag: '🇪🇸' },
+    fr: { name: 'Français', flag: '🇫🇷' },
+    de: { name: 'Deutsch', flag: '🇩🇪' },
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,7 +94,7 @@ export default function App() {
                     key={lang}
                     value={lang}
                   >
-                    🌐 {uiLanguageNames[lang]}
+                    {uiLanguageNames[lang].flag} {uiLanguageNames[lang].name}
                   </option>
                 ))}
               </select>
@@ -141,7 +141,7 @@ export default function App() {
                     key={lang.code}
                     value={lang.code}
                   >
-                    {lang.name}
+                    {lang.flag} {lang.name}
                   </option>
                 ))}
               </select>
