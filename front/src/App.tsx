@@ -1,5 +1,57 @@
 import { useState } from 'react';
 
+// Language translations
+const translations = {
+  en: {
+    title: 'Launch Your Project',
+    subtitle: 'Transform your ideas into reality. Start by telling us about your project vision and requirements.',
+    durationLabel: 'Project Duration',
+    resourcesLabel: 'Project Resources',
+    resourcesPlaceholder: 'List your project resources, tools, technologies, team members, budget, or any other resources you have available for this project...',
+    resourcesHelper: 'characters • Include tools, budget, team, etc.',
+    descriptionLabel: 'Project Description',
+    descriptionPlaceholder: 'Describe your project vision, goals, target audience, key features, and any specific requirements. The more detail you provide, the better we can help bring your project to life...',
+    descriptionHelper: 'characters • Be as detailed as possible',
+    customDurationPlaceholder: 'Enter custom duration (e.g., 4 months, 18 months)',
+    requiredFieldsError: 'Please fill in all required fields',
+    submitError: 'Failed to create project. Please try again.',
+    submitting: 'Launching Project...',
+    submitButton: 'Launch your Project',
+    successMessage: 'Project created successfully! We\'ll be in touch soon.',
+    poweredBy: 'Powered by',
+    weeks: 'Week',
+    weeks_plural: 'Weeks',
+    months: 'Month',
+    months_plural: 'Months',
+    year: 'Year',
+    custom: 'Custom Duration'
+  },
+  fr: {
+    title: 'Lancez Votre Projet',
+    subtitle: 'Transformez vos idées en réalité. Commencez par nous parler de votre vision et de vos besoins.',
+    durationLabel: 'Durée du Projet',
+    resourcesLabel: 'Ressources du Projet',
+    resourcesPlaceholder: 'Listez vos ressources, outils, technologies, membres de l\'équipe, budget ou toute autre ressource disponible pour ce projet...',
+    resourcesHelper: 'caractères • Incluez outils, budget, équipe, etc.',
+    descriptionLabel: 'Description du Projet',
+    descriptionPlaceholder: 'Décrivez la vision de votre projet, les objectifs, le public cible, les fonctionnalités clés et toutes les exigences spécifiques. Plus vous fournissez de détails, mieux nous pourrons vous aider à donner vie à votre projet...',
+    descriptionHelper: 'caractères • Soyez aussi détaillé que possible',
+    customDurationPlaceholder: 'Entrez une durée personnalisée (ex: 4 mois, 18 mois)',
+    requiredFieldsError: 'Veuillez remplir tous les champs obligatoires',
+    submitError: 'Échec de la création du projet. Veuillez réessayer.',
+    submitting: 'Lancement du Projet...',
+    submitButton: 'Lancer votre Projet',
+    successMessage: 'Projet créé avec succès! Nous vous contacterons bientôt.',
+    poweredBy: 'Propulsé par',
+    weeks: 'Semaine',
+    weeks_plural: 'Semaines',
+    months: 'Mois',
+    months_plural: 'Mois',
+    year: 'An',
+    custom: 'Durée Personnalisée'
+  }
+};
+
 interface ProjectFormData {
   duration: string;
   customDuration: string;
@@ -17,17 +69,26 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  
+  // Get translations for current language
+  const t = translations[language];
 
   const durationOptions = [
-    { value: '1-week', label: '1 Week', icon: '⚡' },
-    { value: '2-weeks', label: '2 Weeks', icon: '🚀' },
-    { value: '1-month', label: '1 Month', icon: '📅' },
-    { value: '2-months', label: '2 Months', icon: '⏳' },
-    { value: '3-months', label: '3 Months', icon: '📊' },
-    { value: '6-months', label: '6 Months', icon: '🎯' },
-    { value: '1-year', label: '1 Year', icon: '🏆' },
-    { value: 'custom', label: 'Custom Duration', icon: '🔧' }
+    { value: '1-week', label: '1 ' + (language === 'en' ? 'Week' : 'Semaine'), icon: '⚡' },
+    { value: '2-weeks', label: '2 ' + (language === 'en' ? 'Weeks' : 'Semaines'), icon: '🚀' },
+    { value: '1-month', label: '1 ' + t.months, icon: '📅' },
+    { value: '2-months', label: '2 ' + t.months_plural, icon: '⏳' },
+    { value: '3-months', label: '3 ' + t.months_plural, icon: '📊' },
+    { value: '6-months', label: '6 ' + t.months_plural, icon: '🎯' },
+    { value: '1-year', label: '1 ' + t.year, icon: '🏆' },
+    { value: 'custom', label: t.custom, icon: '🔧' }
   ];
+
+  // Language toggle function
+  const toggleLanguage = () => {
+    setLanguage(language === 'en' ? 'fr' : 'en');
+  };
 
   const handleDurationChange = (duration: string) => {
     setFormData({ ...formData, duration });
@@ -58,7 +119,7 @@ export default function App() {
 
     if (!formData.duration || !formData.description.trim() || 
         (formData.duration === 'custom' && !formData.customDuration.trim())) {
-      setError('Please fill in all required fields');
+      setError(t.requiredFieldsError);
       return;
     }
 
@@ -80,7 +141,7 @@ export default function App() {
       }, 3000);
     } catch (err) {
       console.error(err);
-      setError('Failed to create project. Please try again.');
+      setError(t.submitError);
     } finally {
       setIsLoading(false);
     }
@@ -88,6 +149,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-8 px-4">
+      {/* Language Selector */}
+      <div className="absolute top-4 right-4 z-10">
+        <button 
+          onClick={toggleLanguage}
+          className="flex items-center gap-2 px-3 py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow hover:shadow-md transition-all border border-gray-200"
+        >
+          <span className="text-lg">{language === 'en' ? '🇬🇧' : '🇫🇷'}</span>
+          <span className="font-medium text-gray-700">{language === 'en' ? 'EN' : 'FR'}</span>
+        </button>
+      </div>
+      
       {/* Background decorations */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
@@ -101,10 +173,10 @@ export default function App() {
             <span className="text-2xl">🚀</span>
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-4">
-            Manage Your Project
+            {t.title}
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Transform your ideas into reality. Start by telling us about your project vision and requirements.
+            {t.subtitle}
           </p>
         </div>
 
@@ -116,7 +188,7 @@ export default function App() {
             <div className="space-y-4">
               <label className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <span className="text-blue-500">⏱️</span>
-                Project Duration *
+                {t.durationLabel} <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {durationOptions.map((option) => (
@@ -143,7 +215,7 @@ export default function App() {
                     type="text"
                     value={formData.customDuration}
                     onChange={handleCustomDurationChange}
-                    placeholder="Enter custom duration (e.g., 4 months, 18 months)"
+                    placeholder={t.customDurationPlaceholder}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm"
                     required={formData.duration === 'custom'}
                   />
@@ -155,19 +227,19 @@ export default function App() {
             <div className="space-y-4">
               <label className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <span className="text-green-500">📋</span>
-                Project Resources
+                {t.resourcesLabel}
               </label>
               <textarea
                 id="resources"
                 value={formData.resources}
                 onChange={handleResourcesChange}
-                placeholder="List your project resources, tools, technologies, team members, budget, or any other resources you have available for this project..."
+                placeholder={t.resourcesPlaceholder}
                 rows={4}
                 maxLength={500}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none bg-white/70 backdrop-blur-sm"
               />
               <p className={`text-sm ${formData.resources.length === 500 ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
-                {formData.resources.length}/500 characters • Include tools, budget, team, etc.
+                {formData.resources.length}/500 {t.resourcesHelper}
               </p>
             </div>
 
@@ -175,19 +247,19 @@ export default function App() {
             <div className="space-y-4">
               <label className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <span className="text-purple-500">✍️</span>
-                Project Description *
+                {t.descriptionLabel} <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={formData.description}
                 onChange={handleDescriptionChange}
-                placeholder="Describe your project vision, goals, target audience, key features, and any specific requirements. The more detail you provide, the better we can help bring your project to life..."
+                placeholder={t.descriptionPlaceholder}
                 rows={6}
                 maxLength={1000}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none bg-white/70 backdrop-blur-sm"
                 required
               />
               <p className={`text-sm ${formData.description.length === 1000 ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
-                {formData.description.length}/1000 characters • Be as detailed as possible
+                {formData.description.length}/1000 {t.descriptionHelper}
               </p>
             </div>
 
@@ -203,7 +275,7 @@ export default function App() {
             {success && (
               <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
                 <span className="text-green-500 text-xl">✅</span>
-                <p className="text-green-700 font-medium">Project created successfully! We'll be in touch soon.</p>
+                <p className="text-green-700 font-medium">{t.successMessage}</p>
               </div>
             )}
 
@@ -220,11 +292,11 @@ export default function App() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Managing Project...
+                    {t.submitting}
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    🚀 Manage your Project
+                    🚀 {t.submitButton}
                   </span>
                 )}
               </button>
@@ -235,7 +307,7 @@ export default function App() {
         {/* Footer */}
         <div className="text-center text-gray-500">
           <p className="text-sm">
-            Powered by{' '}
+            {t.poweredBy}{' '}
             <a href="https://services.ceo" className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
               Services.ceo
             </a>
