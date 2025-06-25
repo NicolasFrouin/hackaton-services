@@ -2,14 +2,14 @@ import { useState } from 'react';
 
 interface ProjectFormData {
   duration: string;
-  resources: FileList | null;
+  resources: string;
   description: string;
 }
 
 export default function App() {
   const [formData, setFormData] = useState<ProjectFormData>({
     duration: '',
-    resources: null,
+    resources: '',
     description: ''
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -32,8 +32,8 @@ export default function App() {
     if (error) setError('');
   };
 
-  const handleResourcesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, resources: e.target.files });
+  const handleResourcesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData({ ...formData, resources: e.target.value });
     if (error) setError('');
   };
 
@@ -59,7 +59,7 @@ export default function App() {
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
-        setFormData({ duration: '', resources: null, description: '' });
+        setFormData({ duration: '', resources: '', description: '' });
       }, 3000);
     } catch (err) {
       console.error(err);
@@ -70,7 +70,7 @@ export default function App() {
   };
 
   const handleReset = () => {
-    setFormData({ duration: '', resources: null, description: '' });
+    setFormData({ duration: '', resources: '', description: '' });
     setError('');
     setSuccess(false);
   };
@@ -90,7 +90,7 @@ export default function App() {
             <span className="text-2xl">🚀</span>
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-4">
-            Create Your Project
+            Manage Your Project
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Transform your ideas into reality. Start by telling us about your project vision and requirements.
@@ -126,52 +126,23 @@ export default function App() {
               </div>
             </div>
 
-            {/* File Upload */}
+            {/* Resources Text Field */}
             <div className="space-y-4">
               <label className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <span className="text-green-500">📎</span>
+                <span className="text-green-500">📋</span>
                 Project Resources
               </label>
-              <div className="relative">
-                <input
-                  type="file"
-                  id="resources"
-                  onChange={handleResourcesChange}
-                  multiple
-                  accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.zip,.ppt,.pptx"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors duration-200 bg-gradient-to-br from-gray-50 to-blue-50/30">
-                  <div className="flex flex-col items-center space-y-3">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-2xl">📁</span>
-                    </div>
-                    <div>
-                      <p className="text-lg font-medium text-gray-700">
-                        {formData.resources && formData.resources.length > 0
-                          ? `${formData.resources.length} file(s) selected`
-                          : 'Drop files here or click to upload'
-                        }
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Supports: PDF, DOC, Images, ZIP, PPT (Max 10MB each)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {formData.resources && formData.resources.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {Array.from(formData.resources).map((file, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
-                    >
-                      📄 {file.name}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <textarea
+                id="resources"
+                value={formData.resources}
+                onChange={handleResourcesChange}
+                placeholder="List your project resources, tools, technologies, team members, budget, or any other resources you have available for this project..."
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none bg-white/70 backdrop-blur-sm"
+              />
+              <p className="text-sm text-gray-500">
+                {formData.resources.length}/500 characters • Include tools, budget, team, etc.
+              </p>
             </div>
 
             {/* Description */}
@@ -222,11 +193,11 @@ export default function App() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Creating Project...
+                    Managing Project...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    🚀 Create Project
+                    🚀 Manage your Project
                   </span>
                 )}
               </button>
