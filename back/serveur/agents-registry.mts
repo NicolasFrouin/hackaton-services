@@ -2,6 +2,7 @@ import type { CompiledStateGraph } from '@langchain/langgraph';
 import 'dotenv/config';
 
 import { mygesAgent } from '../Agents/myges/myges.mts';
+import { managerAgent } from '../Agents/manager/manager.mts';
 
 export interface AgentInfo {
   id: string;
@@ -16,8 +17,14 @@ export const AGENTS_REGISTRY: Record<string, AgentInfo> = {
     id: 'myges',
     name: 'MyGES Agent',
     description: 'Agent spécialisé pour MyGES et les informations météo',
-    agent: mygesAgent
-  }
+    agent: mygesAgent,
+  },
+  manager: {
+    id: 'manager',
+    name: 'Manager Agent',
+    description: 'Agent de gestion pour les opérations et la planification',
+    agent: managerAgent,
+  },
 };
 
 // Fonction pour récupérer un agent par son ID
@@ -39,6 +46,6 @@ export function getAgentsMetadata() {
   return Object.values(AGENTS_REGISTRY).map(({ id, name, description }) => ({
     id,
     name,
-    description
+    description,
   }));
-} 
+}
