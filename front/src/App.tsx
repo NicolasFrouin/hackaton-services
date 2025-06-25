@@ -38,8 +38,12 @@ export default function App() {
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFormData({ ...formData, description: e.target.value });
-    if (error) setError('');
+    const value = e.target.value;
+    // Limit to 1000 characters
+    if (value.length <= 1000) {
+      setFormData({ ...formData, description: value });
+      if (error) setError('');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -138,9 +142,10 @@ export default function App() {
                 onChange={handleResourcesChange}
                 placeholder="List your project resources, tools, technologies, team members, budget, or any other resources you have available for this project..."
                 rows={4}
+                maxLength={500}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none bg-white/70 backdrop-blur-sm"
               />
-              <p className="text-sm text-gray-500">
+              <p className={`text-sm ${formData.resources.length === 500 ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
                 {formData.resources.length}/500 characters • Include tools, budget, team, etc.
               </p>
             </div>
@@ -156,10 +161,11 @@ export default function App() {
                 onChange={handleDescriptionChange}
                 placeholder="Describe your project vision, goals, target audience, key features, and any specific requirements. The more detail you provide, the better we can help bring your project to life..."
                 rows={6}
+                maxLength={1000}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none bg-white/70 backdrop-blur-sm"
                 required
               />
-              <p className="text-sm text-gray-500">
+              <p className={`text-sm ${formData.description.length === 1000 ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
                 {formData.description.length}/1000 characters • Be as detailed as possible
               </p>
             </div>
