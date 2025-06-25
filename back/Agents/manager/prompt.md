@@ -46,3 +46,5 @@ Propose des alternatives et solutions de contournement en cas de problèmes
 ## Data
 date : {date}
 heure : {heure}
+
+/no_think
