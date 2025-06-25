@@ -86,17 +86,6 @@ export default function App() {
     }
   };
 
-  const handleReset = () => {
-    setFormData({ 
-      duration: '', 
-      customDuration: '',
-      resources: '', 
-      description: '' 
-    });
-    setError('');
-    setSuccess(false);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-8 px-4">
       {/* Background decorations */}
@@ -238,14 +227,6 @@ export default function App() {
                     🚀 Manage your Project
                   </span>
                 )}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleReset}
-                className="flex-1 sm:flex-initial bg-gray-100 hover:bg-gray-200 text-gray-700 py-4 px-8 rounded-xl font-semibold transition-all duration-200 hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Reset Form
               </button>
             </div>
           </form>
