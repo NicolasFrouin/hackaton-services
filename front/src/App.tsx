@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 interface ProjectFormData {
   duration: string;
+  customDuration: string;
   resources: string;
   description: string;
 }
@@ -9,6 +10,7 @@ interface ProjectFormData {
 export default function App() {
   const [formData, setFormData] = useState<ProjectFormData>({
     duration: '',
+    customDuration: '',
     resources: '',
     description: ''
   });
@@ -32,6 +34,11 @@ export default function App() {
     if (error) setError('');
   };
 
+  const handleCustomDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, customDuration: e.target.value });
+    if (error) setError('');
+  };
+
   const handleResourcesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFormData({ ...formData, resources: e.target.value });
     if (error) setError('');
@@ -49,7 +56,8 @@ export default function App() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.duration || !formData.description.trim()) {
+    if (!formData.duration || !formData.description.trim() || 
+        (formData.duration === 'custom' && !formData.customDuration.trim())) {
       setError('Please fill in all required fields');
       return;
     }
@@ -63,7 +71,12 @@ export default function App() {
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
-        setFormData({ duration: '', resources: '', description: '' });
+        setFormData({ 
+          duration: '', 
+          customDuration: '',
+          resources: '', 
+          description: '' 
+        });
       }, 3000);
     } catch (err) {
       console.error(err);
@@ -74,7 +87,12 @@ export default function App() {
   };
 
   const handleReset = () => {
-    setFormData({ duration: '', resources: '', description: '' });
+    setFormData({ 
+      duration: '', 
+      customDuration: '',
+      resources: '', 
+      description: '' 
+    });
     setError('');
     setSuccess(false);
   };
@@ -128,6 +146,20 @@ export default function App() {
                   </button>
                 ))}
               </div>
+              
+              {/* Custom Duration Input */}
+              {formData.duration === 'custom' && (
+                <div className="mt-3 animate-fadeIn">
+                  <input
+                    type="text"
+                    value={formData.customDuration}
+                    onChange={handleCustomDurationChange}
+                    placeholder="Enter custom duration (e.g., 4 months, 18 months)"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                    required={formData.duration === 'custom'}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Resources Text Field */}
