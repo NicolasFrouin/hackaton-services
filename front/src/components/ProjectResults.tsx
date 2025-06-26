@@ -93,8 +93,12 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                 try {
                   const ganttData = JSON.parse(jsonContent[1]);
                   // Check if this looks like Gantt data (has id, name/text, start, end)
-                  if (Array.isArray(ganttData) && ganttData.length > 0 && 
-                      ganttData[0] && (ganttData[0].id || ganttData[0].name || ganttData[0].text)) {
+                  if (
+                    Array.isArray(ganttData) &&
+                    ganttData.length > 0 &&
+                    ganttData[0] &&
+                    (ganttData[0].id || ganttData[0].name || ganttData[0].text)
+                  ) {
                     setGantt(ganttData);
                     break;
                   }
@@ -147,6 +151,8 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
 
     // Remove JSON blocks from the cleaned content (they're processed separately in useEffect)
     cleaned = cleaned.replace(/```json\s*(\[[\s\S]*?\])\s*```/g, '');
+
+    cleaned = cleaned.replace(/---\n\n## 🗓️ PLANNING \(Gantt Roadmap\).*?/i, '');
 
     return cleaned.trim();
   }, []);
@@ -528,9 +534,7 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                       className='hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group'
                     >
                       <td className='px-6 py-4'>
-                        <div className='font-medium text-gray-900 group-hover:text-gray-800'>
-                          {risk.category}
-                        </div>
+                        <div className='font-medium text-gray-900 group-hover:text-gray-800'>{risk.category}</div>
                       </td>
                       <td className='px-6 py-4'>
                         <div className='flex items-center gap-2'>
@@ -730,13 +734,6 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
             icon='🔄'
             iconColor='text-orange-500'
           />
-
-          <SectionCard
-            title={t.sections.planning}
-            content={sections.planning}
-            icon='🗓️'
-            iconColor='text-green-500'
-          />
         </div>
 
         {/* Gantt Chart */}
@@ -748,7 +745,9 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
             </h3>
             <div className='mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border-l-4 border-purple-400'>
               <p className='text-sm text-gray-700'>
-                <strong className='text-purple-700'>📋 Aperçu:</strong> Ce diagramme de Gantt présente la planification détaillée du projet avec {gantt.length} tâche{gantt.length > 1 ? 's' : ''} identifiée{gantt.length > 1 ? 's' : ''}.
+                <strong className='text-purple-700'>📋 Aperçu:</strong> Ce diagramme de Gantt présente la planification
+                détaillée du projet avec {gantt.length} tâche{gantt.length > 1 ? 's' : ''} identifiée
+                {gantt.length > 1 ? 's' : ''}.
               </p>
             </div>
             <Chart
@@ -783,40 +782,43 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                   criticalPathEnabled: true,
                   criticalPathStyle: {
                     stroke: '#e74c3c',
-                    strokeWidth: 2
+                    strokeWidth: 2,
                   },
                   innerGridHorizLine: {
                     stroke: '#e8f4fd',
                     strokeWidth: 1,
                   },
-                  innerGridTrack: { 
-                    fill: '#f8fafc' 
+                  innerGridTrack: {
+                    fill: '#f8fafc',
                   },
-                  innerGridDarkTrack: { 
-                    fill: '#f1f5f9' 
+                  innerGridDarkTrack: {
+                    fill: '#f1f5f9',
                   },
                   arrow: {
                     angle: 100,
                     length: 8,
-                    spaceAfter: 4
+                    spaceAfter: 4,
                   },
                   labelStyle: {
                     fontName: 'Arial',
                     fontSize: 12,
-                    color: '#374151'
+                    color: '#374151',
                   },
-                  sortTasks: false
+                  sortTasks: false,
                 },
                 backgroundColor: '#ffffff',
                 fontSize: 12,
-                fontName: 'Arial'
+                fontName: 'Arial',
               }}
             />
-            
+
             {/* Task Summary */}
             <div className='mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               {gantt.slice(0, 6).map((task, index) => (
-                <div key={index} className='bg-gray-50 rounded-lg p-3 border-l-4 border-purple-400'>
+                <div
+                  key={index}
+                  className='bg-gray-50 rounded-lg p-3 border-l-4 border-purple-400'
+                >
                   <h4 className='font-medium text-gray-800 text-sm mb-1'>
                     {task.name || task.text || `Tâche ${index + 1}`}
                   </h4>
@@ -830,7 +832,9 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                     {task.duration && (
                       <div className='flex items-center gap-1'>
                         <span className='text-orange-500'>⏱️</span>
-                        <span>{task.duration} jour{task.duration > 1 ? 's' : ''}</span>
+                        <span>
+                          {task.duration} jour{task.duration > 1 ? 's' : ''}
+                        </span>
                       </div>
                     )}
                     {task.progress !== undefined && (
@@ -842,14 +846,12 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                   </div>
                 </div>
               ))}
-              
+
               {gantt.length > 6 && (
                 <div className='bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-3 flex items-center justify-center text-center'>
                   <div className='text-purple-700'>
                     <div className='text-xl mb-1'>📋</div>
-                    <div className='text-xs font-medium'>
-                      +{gantt.length - 6} autres tâches
-                    </div>
+                    <div className='text-xs font-medium'>+{gantt.length - 6} autres tâches</div>
                   </div>
                 </div>
               )}
