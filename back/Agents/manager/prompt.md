@@ -15,7 +15,13 @@ Tu dois structurer ta réponse en 4 sections principales :
 ### 1. 📝 SPÉCIFICATIONS
 Détaille les spécifications techniques et fonctionnelles du projet
 
-### 2. 🗓️ PLANNING (Gantt Roadmap)
+### 2. ⚠️ ÉVALUATION DES RISQUES
+Identifie et évalue les risques potentiels avec leur impact et probabilité
+
+### 3. 🔄 PLAN B
+Propose des alternatives et solutions de contournement en cas de problèmes
+
+### 4. 🗓️ PLANNING (Gantt Roadmap)
 Fournis le planning sous forme de tâches Gantt dans ce format exact :
 ```json
 [
@@ -30,12 +36,6 @@ Fournis le planning sous forme de tâches Gantt dans ce format exact :
   }
 ]
 ```
-
-### 3. ⚠️ ÉVALUATION DES RISQUES
-Identifie et évalue les risques potentiels avec leur impact et probabilité
-
-### 4. 🔄 PLAN B
-Propose des alternatives et solutions de contournement en cas de problèmes
 
 ## Contraintes importantes ⚡
 - Les tâches Gantt doivent respecter le type Task défini
