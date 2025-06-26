@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Chart from 'react-google-charts';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ProjectAnalysis {
   duration: string;
@@ -648,6 +649,7 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
             </h2>
             <div className='prose prose-lg max-w-none'>
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 components={{
                   h1: ({ children }) => (
                     <h1 className='text-2xl font-bold text-gray-900 mb-4 border-b-2 border-gray-200 pb-2'>

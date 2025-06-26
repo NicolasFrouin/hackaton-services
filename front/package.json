@@ -17,6 +17,7 @@
     "react-dom": "^19.1.0",
     "react-google-charts": "^5.2.1",
     "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.1.10",
     "vite-plugin-node-polyfills": "^0.23.0"
   },
