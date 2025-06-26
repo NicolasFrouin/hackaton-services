@@ -22,6 +22,7 @@ const translations = {
   en: {
     title: 'Project Analysis Results',
     backButton: 'Create New Project',
+    exportButton: 'Export to PDF',
     noResults: 'No project analysis found. Please create a project first.',
     loading: 'Loading analysis...',
     sections: {
@@ -40,6 +41,7 @@ const translations = {
   fr: {
     title: "Résultats de l'Analyse du Projet",
     backButton: 'Créer un Nouveau Projet',
+    exportButton: 'Exporter en PDF',
     noResults: "Aucune analyse de projet trouvée. Veuillez d'abord créer un projet.",
     loading: "Chargement de l'analyse...",
     sections: {
@@ -75,6 +77,89 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
   >([]);
 
   const t = translations[language];
+
+  // Export to PDF function
+  const exportToPDF = useCallback(() => {
+    const printContent = document.getElementById('results-content');
+    if (!printContent) return;
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    // Get the current page styles
+    const styles = Array.from(document.styleSheets)
+      .map(styleSheet => {
+        try {
+          return Array.from(styleSheet.cssRules)
+            .map(rule => rule.cssText)
+            .join('\n');
+        } catch {
+          return '';
+        }
+      })
+      .join('\n');
+
+    // Create the print document
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Analyse de Projet - ${analysis?.description || 'Projet'}</title>
+          <meta charset="utf-8">
+          <style>
+            ${styles}
+            @media print {
+              body { 
+                font-family: Arial, sans-serif;
+                line-height: 1.5;
+                color: #000;
+                background: white !important;
+              }
+              .no-print { display: none !important; }
+              .bg-gradient-to-br,
+              .bg-gradient-to-r,
+              .backdrop-blur-xl,
+              .backdrop-blur-sm { 
+                background: white !important; 
+              }
+              .shadow-xl,
+              .shadow-lg,
+              .shadow-md { 
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important; 
+              }
+              .border-white { 
+                border-color: #e5e7eb !important; 
+              }
+              .text-transparent { 
+                color: #1f2937 !important; 
+              }
+              .break-inside-avoid { 
+                page-break-inside: avoid; 
+              }
+              table { 
+                page-break-inside: avoid; 
+              }
+              h1, h2, h3 { 
+                page-break-after: avoid; 
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    
+    // Wait for content to load then print
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  }, [analysis]);
 
   useEffect(() => {
     const loadAnalysis = () => {
@@ -586,12 +671,12 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
   return (
     <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-8 px-4'>
       {/* Background decorations */}
-      <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+      <div className='fixed inset-0 overflow-hidden pointer-events-none no-print'>
         <div className='absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl'></div>
         <div className='absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-tr from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl'></div>
       </div>
 
-      <div className='max-w-6xl mx-auto relative'>
+      <div className='max-w-6xl mx-auto relative' id='results-content'>
         {/* Header */}
         <div className='flex items-center justify-between mb-8'>
           <div className='flex items-center gap-4'>
@@ -602,12 +687,23 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
               {t.title}
             </h1>
           </div>
-          <button
-            onClick={onBack}
-            className='bg-white/80 backdrop-blur-sm text-gray-700 px-4 py-2 rounded-lg border border-gray-200 hover:bg-white hover:shadow-md transition-all'
-          >
-            ← {t.backButton}
-          </button>
+          <div className='flex items-center gap-3 no-print'>
+            <button
+              onClick={exportToPDF}
+              className='bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg border border-green-200 hover:from-green-600 hover:to-green-700 hover:shadow-md transition-all flex items-center gap-2'
+            >
+              <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+              </svg>
+              {t.exportButton}
+            </button>
+            <button
+              onClick={onBack}
+              className='bg-white/80 backdrop-blur-sm text-gray-700 px-4 py-2 rounded-lg border border-gray-200 hover:bg-white hover:shadow-md transition-all'
+            >
+              ← {t.backButton}
+            </button>
+          </div>
         </div>
 
         {/* Project Information Card */}
