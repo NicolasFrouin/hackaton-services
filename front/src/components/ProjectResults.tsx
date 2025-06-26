@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ReactMarkdown from "react-markdown";
 
 interface GanttTask {
   id: string;
@@ -109,6 +110,27 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
       minute: '2-digit'
     });
   };
+  
+  function extractJsonFromAnalysis(analysisText) {
+    const jsonPattern = /```json\n([\s\S]*?)\n```/;
+    const match = analysisText.match(jsonPattern);
+    
+    let cleanedText = analysisText;
+    let parsedJson = null;
+    
+    if (match && match[1]) {
+      try {
+        parsedJson = JSON.parse(match[1]);
+        cleanedText = analysisText.replace(/```json\n[\s\S]*?\n```/, '');
+      } catch (error) {
+        console.error("Failed to parse JSON:", error);
+      }
+    }
+    
+    return { parsedJson, cleanedText };
+  }
+
+const { parsedJson: ganttData, cleanedText: cleanAnalysisText } = extractJsonFromAnalysis(analysis?.analysis || '');
 
   const parseAnalysisContent = (content: string) => {
     const sections = {
@@ -218,6 +240,8 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
             </div>
           </div>
         </div>
+
+        <div> <ReactMarkdown>{cleanAnalysisText}</ReactMarkdown> </div>
 
         {/* Analysis Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
