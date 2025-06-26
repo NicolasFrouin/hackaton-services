@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import ProjectResults from './components/ProjectResults';
+import { apiCall, API_CONFIG } from './config/api';
 
 // Language translations
 const translations = {
@@ -15,8 +17,10 @@ const translations = {
     customDurationPlaceholder: 'Enter custom duration (e.g., 4 months, 18 months)',
     requiredFieldsError: 'Please fill in all required fields',
     submitError: 'Failed to create project. Please try again.',
+    serverError: 'Unable to connect to the server. Please make sure the backend is running.',
     submitting: 'Launching Project...',
     submitButton: 'Launch your Project',
+    viewResultsButton: 'View Previous Results',
     successMessage: 'Project created successfully! We\'ll be in touch soon.',
     poweredBy: 'Powered by',
     weeks: 'Week',
@@ -39,8 +43,10 @@ const translations = {
     customDurationPlaceholder: 'Entrez une durée personnalisée (ex: 4 mois, 18 mois)',
     requiredFieldsError: 'Veuillez remplir tous les champs obligatoires',
     submitError: 'Échec de la création du projet. Veuillez réessayer.',
+    serverError: 'Impossible de se connecter au serveur. Veuillez vous assurer que le backend est en cours d\'exécution.',
     submitting: 'Lancement du Projet...',
     submitButton: 'Lancer votre Projet',
+    viewResultsButton: 'Voir les Résultats Précédents',
     successMessage: 'Projet créé avec succès! Nous vous contacterons bientôt.',
     poweredBy: 'Propulsé par',
     weeks: 'Semaine',
@@ -70,6 +76,16 @@ export default function App() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  const [currentView, setCurrentView] = useState<'form' | 'results'>('form');
+  const [hasPreviousResults, setHasPreviousResults] = useState(false);
+
+  // Check for previous results on component mount
+  useEffect(() => {
+    const stored = localStorage.getItem('projectAnalysis');
+    if (stored) {
+      setHasPreviousResults(true);
+    }
+  }, []);
   
   // Get translations for current language
   const t = translations[language];
@@ -127,25 +143,88 @@ export default function App() {
     setError('');
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Prepare the project data for the manager agent
+      const projectData = {
+        duration: formData.duration === 'custom' ? formData.customDuration : formData.duration,
+        resources: formData.resources || 'To be determined',
+        description: formData.description,
+        language: language
+      };
+
+      // Create the message for the manager agent
+      const message = `
+Analyze this project idea:
+
+**Project Description:** ${projectData.description}
+
+**Duration:** ${projectData.duration}
+
+**Available Resources:** ${projectData.resources}
+
+**Language:** ${projectData.language}
+
+Please provide a complete project analysis with specifications, risk evaluation, plan B, and a detailed Gantt roadmap planning.
+      `.trim();
+
+      // Call the backend API
+      const result = await apiCall(API_CONFIG.ENDPOINTS.MANAGER_INVOKE, {
+        method: 'POST',
+        body: JSON.stringify({
+          message: message,
+          context: projectData
+        })
+      });
+      
+      // Show success and store the analysis result
       setSuccess(true);
+      
+      // You can store the result in state or localStorage for later use
+      localStorage.setItem('projectAnalysis', JSON.stringify({
+        ...projectData,
+        analysis: result.content,
+        thread_id: result.thread_id,
+        timestamp: new Date().toISOString()
+      }));
+
+      // Navigate to results view after a short delay
       setTimeout(() => {
         setSuccess(false);
-        setFormData({ 
-          duration: '', 
-          customDuration: '',
-          resources: '', 
-          description: '' 
-        });
-      }, 3000);
+        setCurrentView('results');
+      }, 2000);
+
     } catch (err) {
-      console.error(err);
-      setError(t.submitError);
+      console.error('Error submitting project:', err);
+      if (err instanceof Error) {
+        if (err.message.includes('fetch') || err.message.includes('Failed to fetch')) {
+          setError(t.serverError);
+        } else {
+          setError(err.message);
+        }
+      } else {
+        setError(t.submitError);
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Handle navigation back to form
+  const handleBackToForm = () => {
+    setCurrentView('form');
+    setFormData({ 
+      duration: '', 
+      customDuration: '',
+      resources: '', 
+      description: '' 
+    });
+    setError('');
+    setSuccess(false);
+  };
+
+  // Render results view if current view is results
+  if (currentView === 'results') {
+    return <ProjectResults onBack={handleBackToForm} language={language} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-8 px-4">
@@ -300,6 +379,16 @@ export default function App() {
                   </span>
                 )}
               </button>
+              
+              {hasPreviousResults && (
+                <button
+                  type="button"
+                  onClick={() => setCurrentView('results')}
+                  className="sm:w-auto bg-white border-2 border-blue-500 text-blue-600 py-4 px-6 rounded-xl font-semibold text-lg hover:bg-blue-50 focus:ring-4 focus:ring-blue-500/30 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  📊 {t.viewResultsButton}
+                </button>
+              )}
             </div>
           </form>
         </div>
