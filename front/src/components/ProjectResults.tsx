@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import Chart from 'react-google-charts';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import logo from '../assets/logo.png';
 
 interface ProjectAnalysis {
   duration: string;
@@ -89,10 +90,10 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
 
     // Get the current page styles
     const styles = Array.from(document.styleSheets)
-      .map(styleSheet => {
+      .map((styleSheet) => {
         try {
           return Array.from(styleSheet.cssRules)
-            .map(rule => rule.cssText)
+            .map((rule) => rule.cssText)
             .join('\n');
         } catch {
           return '';
@@ -123,6 +124,16 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
               .backdrop-blur-sm { 
                 background: white !important; 
               }
+              .bg-white\\/50,
+              .bg-white\\/30,
+              .bg-\\[\\#33E1FF\\]\\/5,
+              .bg-\\[\\#33E1FF\\]\\/10,
+              .bg-\\[\\#00B7FF\\]\\/5,
+              .bg-\\[\\#00B7FF\\]\\/10,
+              .bg-\\[\\#4B0082\\]\\/10,
+              .bg-\\[\\#0A1B2A\\]\\/90 {
+                background: white !important;
+              }
               .shadow-xl,
               .shadow-lg,
               .shadow-md { 
@@ -133,6 +144,18 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
               }
               .text-transparent { 
                 color: #1f2937 !important; 
+              }
+              .text-\\[\\#0A1B2A\\] { 
+                color: #1f2937 !important; 
+              }
+              .text-\\[\\#00B7FF\\] { 
+                color: #0070f3 !important; 
+              }
+              .text-\\[\\#33E1FF\\] { 
+                color: #0070f3 !important; 
+              }
+              .text-\\[\\#4B0082\\] { 
+                color: #6b46c1 !important; 
               }
               .break-inside-avoid { 
                 page-break-inside: avoid; 
@@ -153,7 +176,7 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
     `);
 
     printWindow.document.close();
-    
+
     // Wait for content to load then print
     setTimeout(() => {
       printWindow.print();
@@ -238,7 +261,7 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
     // Remove JSON blocks from the cleaned content (they're processed separately in useEffect)
     cleaned = cleaned.replace(/```json\s*(\[[\s\S]*?\])\s*```/g, '');
 
-    cleaned = cleaned.replace(/---\n\n## 🗓️ PLANNING \(Gantt Roadmap\).*?/i, '');
+    cleaned = cleaned.replace(/---\n\n## 🗓️ (?:\*\*)?PLANNING \(Gantt Roadmap\)(?:\*\*)?.*?/i, '');
 
     return cleaned.trim();
   }, []);
@@ -303,10 +326,10 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-8 px-4 flex items-center justify-center'>
+      <div className='min-h-screen bg-gradient-to-br from-[#0A1B2A] via-[#0A1B2A] to-[#4B0082] py-8 px-4 flex items-center justify-center'>
         <div className='text-center'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4'></div>
-          <p className='text-gray-600'>{t.loading}</p>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#00B7FF] mx-auto mb-4'></div>
+          <p className='text-[#33E1FF]'>{t.loading}</p>
         </div>
       </div>
     );
@@ -314,13 +337,13 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
 
   if (!analysis) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-8 px-4 flex items-center justify-center'>
+      <div className='min-h-screen bg-gradient-to-br from-[#0A1B2A] via-[#0A1B2A] to-[#4B0082] py-8 px-4 flex items-center justify-center'>
         <div className='text-center'>
           <div className='text-6xl mb-4'>😔</div>
-          <p className='text-gray-600 mb-6'>{t.noResults}</p>
+          <p className='text-[#33E1FF] mb-6'>{t.noResults}</p>
           <button
             onClick={onBack}
-            className='bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all'
+            className='bg-gradient-to-r from-[#00B7FF] to-[#33E1FF] text-white px-6 py-3 rounded-xl hover:from-[#00B7FF]/90 hover:to-[#33E1FF]/90 transition-all shadow-xl'
           >
             {t.backButton}
           </button>
@@ -368,45 +391,47 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
     }
 
     return (
-      <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6'>
-        <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2'>
+      <div className='bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#33E1FF]/20 p-6'>
+        <h3 className='text-lg font-semibold text-[#0A1B2A] mb-4 flex items-center gap-2'>
           <span className={iconColor}>{icon}</span>
           {title}
         </h3>
-        <div className='prose prose-sm max-w-none text-gray-700'>
+        <div className='prose prose-sm max-w-none text-[#0A1B2A]'>
           <ReactMarkdown
             components={{
-              h1: ({ children }) => <h1 className='text-xl font-bold text-gray-900 mb-3'>{children}</h1>,
-              h2: ({ children }) => <h2 className='text-lg font-semibold text-gray-800 mb-2'>{children}</h2>,
-              h3: ({ children }) => <h3 className='text-base font-medium text-gray-700 mb-2'>{children}</h3>,
-              p: ({ children }) => <p className='mb-3 text-gray-700 leading-relaxed'>{children}</p>,
+              h1: ({ children }) => <h1 className='text-xl font-bold text-[#0A1B2A] mb-3'>{children}</h1>,
+              h2: ({ children }) => <h2 className='text-lg font-semibold text-[#0A1B2A] mb-2'>{children}</h2>,
+              h3: ({ children }) => <h3 className='text-base font-medium text-[#0A1B2A] mb-2'>{children}</h3>,
+              p: ({ children }) => <p className='mb-3 text-[#0A1B2A] leading-relaxed'>{children}</p>,
               ul: ({ children }) => (
-                <div className='mb-3 bg-gray-50 rounded-lg p-3 enhanced-list'>
+                <div className='mb-3 bg-[#33E1FF]/5 rounded-lg p-3 enhanced-list'>
                   <ul className='space-y-1'>{children}</ul>
                 </div>
               ),
               ol: ({ children }) => (
-                <div className='mb-3 bg-gray-50 rounded-lg p-3 enhanced-list'>
+                <div className='mb-3 bg-[#33E1FF]/5 rounded-lg p-3 enhanced-list'>
                   <ol className='space-y-1 list-decimal list-inside'>{children}</ol>
                 </div>
               ),
               li: ({ children }) => (
-                <li className='flex items-start gap-2 text-gray-700'>
-                  <span className='text-blue-500 text-sm mt-1'>▸</span>
+                <li className='flex items-start gap-2 text-[#0A1B2A]'>
+                  <span className='text-[#00B7FF] text-sm mt-1'>▸</span>
                   <span className='text-sm'>{children}</span>
                 </li>
               ),
-              strong: ({ children }) => <strong className='font-semibold text-gray-900'>{children}</strong>,
-              em: ({ children }) => <em className='italic text-gray-600'>{children}</em>,
+              strong: ({ children }) => <strong className='font-semibold text-[#0A1B2A]'>{children}</strong>,
+              em: ({ children }) => <em className='italic text-[#33E1FF]'>{children}</em>,
               blockquote: ({ children }) => (
-                <blockquote className='border-l-4 border-blue-200 pl-4 py-2 bg-blue-50 rounded-r-lg mb-3'>
+                <blockquote className='border-l-4 border-[#00B7FF] pl-4 py-2 bg-[#00B7FF]/5 rounded-r-lg mb-3'>
                   {children}
                 </blockquote>
               ),
               code: ({ children }) => (
-                <code className='bg-gray-100 px-2 py-1 rounded text-sm font-mono'>{children}</code>
+                <code className='bg-[#33E1FF]/10 px-2 py-1 rounded text-sm font-mono'>{children}</code>
               ),
-              pre: ({ children }) => <pre className='bg-gray-100 p-4 rounded-lg overflow-x-auto mb-3'>{children}</pre>,
+              pre: ({ children }) => (
+                <pre className='bg-[#33E1FF]/10 p-4 rounded-lg overflow-x-auto mb-3'>{children}</pre>
+              ),
             }}
           >
             {content}
@@ -465,19 +490,21 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
     const specifications = parseSpecifications(content);
 
     return (
-      <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6'>
-        <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2'>
+      <div className='bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#33E1FF]/20 p-6'>
+        <h3 className='text-lg font-semibold text-[#0A1B2A] mb-4 flex items-center gap-2'>
           <span className={iconColor}>{icon}</span>
           {title}
         </h3>
 
         {specifications.length > 0 ? (
           <div className='overflow-x-auto'>
-            <table className='w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm'>
+            <table className='w-full border-collapse bg-white/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm'>
               <thead>
-                <tr className='bg-gradient-to-r from-blue-50 to-indigo-50'>
-                  <th className='border border-gray-200 px-4 py-3 text-left font-semibold text-gray-700'>Élément</th>
-                  <th className='border border-gray-200 px-4 py-3 text-left font-semibold text-gray-700'>
+                <tr className='bg-gradient-to-r from-[#00B7FF]/10 to-[#33E1FF]/10'>
+                  <th className='border border-[#33E1FF]/20 px-4 py-3 text-left font-semibold text-[#0A1B2A]'>
+                    Élément
+                  </th>
+                  <th className='border border-[#33E1FF]/20 px-4 py-3 text-left font-semibold text-[#0A1B2A]'>
                     Description
                   </th>
                 </tr>
@@ -486,19 +513,21 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                 {specifications.map((spec, index) => (
                   <tr
                     key={index}
-                    className='hover:bg-blue-50/50 transition-colors'
+                    className='hover:bg-[#00B7FF]/5 transition-colors'
                   >
-                    <td className='border border-gray-200 px-4 py-3 font-medium text-gray-800 bg-gray-50/50'>
+                    <td className='border border-[#33E1FF]/20 px-4 py-3 font-medium text-[#0A1B2A] bg-[#33E1FF]/10'>
                       {spec.category}
                     </td>
-                    <td className='border border-gray-200 px-4 py-3 text-sm text-gray-700'>{spec.details}</td>
+                    <td className='border border-[#33E1FF]/20 px-4 py-3 text-sm text-[#0A1B2A] bg-white/30'>
+                      {spec.details}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <div className='prose prose-sm max-w-none text-gray-700'>
+          <div className='prose prose-sm max-w-none text-[#0A1B2A]'>
             <ReactMarkdown>{content}</ReactMarkdown>
           </div>
         )}
@@ -569,58 +598,58 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
     const risks = parseRiskContent(content);
 
     return (
-      <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6'>
-        <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2'>
+      <div className='bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#33E1FF]/20 p-6'>
+        <h3 className='text-lg font-semibold text-[#0A1B2A] mb-4 flex items-center gap-2'>
           <span className={iconColor}>{icon}</span>
           {title}
         </h3>
 
         {risks.length > 0 ? (
           <div className='overflow-x-auto'>
-            <div className='rounded-xl overflow-hidden shadow-lg border border-gray-100'>
-              <table className='w-full'>
+            <div className='rounded-xl overflow-hidden shadow-xl border border-[#33E1FF]/20'>
+              <table className='w-full bg-white/50 backdrop-blur-sm'>
                 <thead>
-                  <tr className='bg-gradient-to-r from-red-50 via-orange-50 to-yellow-50 border-b border-red-100'>
-                    <th className='px-6 py-4 text-left font-semibold text-gray-800 text-sm uppercase tracking-wide'>
+                  <tr className='bg-gradient-to-r from-red-50/50 via-orange-50/50 to-yellow-50/50 border-b border-[#33E1FF]/20'>
+                    <th className='px-6 py-4 text-left font-semibold text-[#0A1B2A] text-sm uppercase tracking-wide'>
                       <div className='flex items-center gap-2'>
                         <span className='text-red-500'>🏷️</span>
                         Catégorie
                       </div>
                     </th>
-                    <th className='px-6 py-4 text-left font-semibold text-gray-800 text-sm uppercase tracking-wide'>
+                    <th className='px-6 py-4 text-left font-semibold text-[#0A1B2A] text-sm uppercase tracking-wide'>
                       <div className='flex items-center gap-2'>
                         <span className='text-orange-500'>📊</span>
                         Niveau
                       </div>
                     </th>
-                    <th className='px-6 py-4 text-left font-semibold text-gray-800 text-sm uppercase tracking-wide'>
+                    <th className='px-6 py-4 text-left font-semibold text-[#0A1B2A] text-sm uppercase tracking-wide'>
                       <div className='flex items-center gap-2'>
-                        <span className='text-blue-500'>🎯</span>
+                        <span className='text-[#00B7FF]'>🎯</span>
                         Probabilité
                       </div>
                     </th>
-                    <th className='px-6 py-4 text-left font-semibold text-gray-800 text-sm uppercase tracking-wide'>
+                    <th className='px-6 py-4 text-left font-semibold text-[#0A1B2A] text-sm uppercase tracking-wide'>
                       <div className='flex items-center gap-2'>
-                        <span className='text-purple-500'>💥</span>
+                        <span className='text-[#4B0082]'>💥</span>
                         Impact
                       </div>
                     </th>
-                    <th className='px-6 py-4 text-left font-semibold text-gray-800 text-sm uppercase tracking-wide'>
+                    <th className='px-6 py-4 text-left font-semibold text-[#0A1B2A] text-sm uppercase tracking-wide'>
                       <div className='flex items-center gap-2'>
-                        <span className='text-green-500'>🛡️</span>
+                        <span className='text-[#33E1FF]'>🛡️</span>
                         Mitigation
                       </div>
                     </th>
                   </tr>
                 </thead>
-                <tbody className='bg-white divide-y divide-gray-100'>
+                <tbody className='bg-white/30 divide-y divide-[#33E1FF]/10'>
                   {risks.map((risk, index) => (
                     <tr
                       key={index}
-                      className='hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group'
+                      className='hover:bg-gradient-to-r hover:from-[#33E1FF]/5 hover:to-[#00B7FF]/5 transition-all duration-200 group'
                     >
                       <td className='px-6 py-4'>
-                        <div className='font-medium text-gray-900 group-hover:text-gray-800'>{risk.category}</div>
+                        <div className='font-medium text-[#0A1B2A] group-hover:text-[#0A1B2A]'>{risk.category}</div>
                       </td>
                       <td className='px-6 py-4'>
                         <div className='flex items-center gap-2'>
@@ -639,17 +668,17 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                         </div>
                       </td>
                       <td className='px-6 py-4'>
-                        <div className='text-sm text-gray-700 bg-blue-50 px-3 py-2 rounded-lg border-l-4 border-blue-300'>
+                        <div className='text-sm text-[#0A1B2A] bg-[#00B7FF]/10 px-3 py-2 rounded-lg border-l-4 border-[#00B7FF]'>
                           {risk.probability}
                         </div>
                       </td>
                       <td className='px-6 py-4'>
-                        <div className='text-sm text-gray-700 bg-purple-50 px-3 py-2 rounded-lg border-l-4 border-purple-300'>
+                        <div className='text-sm text-[#0A1B2A] bg-[#4B0082]/10 px-3 py-2 rounded-lg border-l-4 border-[#4B0082]'>
                           {risk.impact}
                         </div>
                       </td>
                       <td className='px-6 py-4'>
-                        <div className='text-sm text-gray-700 bg-green-50 px-3 py-2 rounded-lg border-l-4 border-green-300'>
+                        <div className='text-sm text-[#0A1B2A] bg-[#33E1FF]/10 px-3 py-2 rounded-lg border-l-4 border-[#33E1FF]'>
                           {risk.mitigation}
                         </div>
                       </td>
@@ -660,7 +689,7 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
             </div>
           </div>
         ) : (
-          <div className='prose prose-sm max-w-none text-gray-700'>
+          <div className='prose prose-sm max-w-none text-[#0A1B2A]'>
             <ReactMarkdown>{content}</ReactMarkdown>
           </div>
         )}
@@ -669,37 +698,57 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-8 px-4'>
+    <div className='min-h-screen bg-gradient-to-br from-[#0A1B2A] via-[#0A1B2A] to-[#4B0082] py-8 px-4'>
       {/* Background decorations */}
       <div className='fixed inset-0 overflow-hidden pointer-events-none no-print'>
-        <div className='absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl'></div>
-        <div className='absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-tr from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl'></div>
+        <div className='absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-br from-[#00B7FF]/20 to-[#33E1FF]/20 rounded-full blur-3xl'></div>
+        <div className='absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-tr from-[#4B0082]/20 to-[#00B7FF]/20 rounded-full blur-3xl'></div>
       </div>
 
-      <div className='max-w-6xl mx-auto relative' id='results-content'>
+      <div
+        className='max-w-6xl mx-auto relative'
+        id='results-content'
+      >
         {/* Header */}
         <div className='flex items-center justify-between mb-8'>
           <div className='flex items-center gap-4'>
-            <div className='inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl shadow-lg'>
-              <span className='text-xl'>✅</span>
+            <div className='inline-flex items-center justify-center w-40 h-20 bg-white/01 backdrop-blur-xl rounded-md shadow-xl p-1'>
+              <img
+                src={logo}
+                alt='Axivio Logo'
+                className='w-full h-full object-contain'
+                style={{
+                  filter: 'drop-shadow(0 2px 4px rgba(0, 183, 255, 0.3))',
+                }}
+              />
             </div>
-            <h1 className='text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent'>
+            <h1 className='text-3xl font-bold bg-gradient-to-r from-white via-[#33E1FF] to-white bg-clip-text text-transparent'>
               {t.title}
             </h1>
           </div>
           <div className='flex items-center gap-3 no-print'>
             <button
               onClick={exportToPDF}
-              className='bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg border border-green-200 hover:from-green-600 hover:to-green-700 hover:shadow-md transition-all flex items-center gap-2'
+              className='bg-gradient-to-r from-[#00B7FF] to-[#33E1FF] text-white px-4 py-2 rounded-xl border border-[#33E1FF]/20 hover:from-[#00B7FF]/90 hover:to-[#33E1FF]/90 hover:shadow-xl transition-all flex items-center gap-2 shadow-xl'
             >
-              <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+              <svg
+                className='w-4 h-4'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+                />
               </svg>
               {t.exportButton}
             </button>
             <button
               onClick={onBack}
-              className='bg-white/80 backdrop-blur-sm text-gray-700 px-4 py-2 rounded-lg border border-gray-200 hover:bg-white hover:shadow-md transition-all'
+              className='bg-white/90 backdrop-blur-xl text-[#0A1B2A] px-4 py-2 rounded-xl border border-[#33E1FF]/20 hover:bg-white/95 hover:shadow-xl transition-all shadow-xl'
             >
               ← {t.backButton}
             </button>
@@ -707,29 +756,29 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
         </div>
 
         {/* Project Information Card */}
-        <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 mb-8'>
-          <h2 className='text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2'>
-            <span className='text-blue-500'>📋</span>
+        <div className='bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#33E1FF]/20 p-6 mb-8'>
+          <h2 className='text-xl font-semibold text-[#0A1B2A] mb-4 flex items-center gap-2'>
+            <span className='text-[#00B7FF]'>📋</span>
             {t.projectInfo}
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
             <div>
-              <span className='font-medium text-gray-600'>{t.duration}:</span>
-              <span className='ml-2 text-gray-800'>{analysis.duration}</span>
+              <span className='font-medium text-[#33E1FF]'>{t.duration}:</span>
+              <span className='ml-2 text-[#0A1B2A]'>{analysis.duration}</span>
             </div>
             <div>
-              <span className='font-medium text-gray-600'>{t.analyzedOn}:</span>
-              <span className='ml-2 text-gray-800'>{formatDate(analysis.timestamp)}</span>
+              <span className='font-medium text-[#33E1FF]'>{t.analyzedOn}:</span>
+              <span className='ml-2 text-[#0A1B2A]'>{formatDate(analysis.timestamp)}</span>
             </div>
             <div className='md:col-span-2'>
-              <span className='font-medium text-gray-600'>{t.resources}:</span>
-              <span className='ml-2 text-gray-800'>{analysis.resources}</span>
+              <span className='font-medium text-[#33E1FF]'>{t.resources}:</span>
+              <span className='ml-2 text-[#0A1B2A]'>{analysis.resources}</span>
             </div>
             <div className='md:col-span-2'>
-              <span className='font-medium text-gray-600'>{t.description}:</span>
-              <p className='mt-1 text-gray-800'>{analysis.description}</p>
+              <span className='font-medium text-[#33E1FF]'>{t.description}:</span>
+              <p className='mt-1 text-[#0A1B2A]'>{analysis.description}</p>
             </div>
-            <div className='md:col-span-2 text-xs text-gray-500'>
+            <div className='md:col-span-2 text-xs text-[#33E1FF]/70'>
               <span className='font-medium'>{t.threadId}:</span>
               <span className='ml-2'>{analysis.thread_id}</span>
             </div>
@@ -738,9 +787,9 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
 
         {/* Full Analysis Content */}
         {sections.fullContent && (
-          <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 mb-8'>
-            <h2 className='text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2'>
-              <span className='text-purple-500'>🤖</span>
+          <div className='bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#33E1FF]/20 p-6 mb-8'>
+            <h2 className='text-xl font-semibold text-[#0A1B2A] mb-6 flex items-center gap-2'>
+              <span className='text-[#4B0082]'>🤖</span>
               Analyse IA Complète
             </h2>
             <div className='prose prose-lg max-w-none'>
@@ -748,60 +797,64 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                 remarkPlugins={[remarkGfm]}
                 components={{
                   h1: ({ children }) => (
-                    <h1 className='text-2xl font-bold text-gray-900 mb-4 border-b-2 border-gray-200 pb-2'>
+                    <h1 className='text-2xl font-bold text-[#0A1B2A] mb-4 border-b-2 border-[#33E1FF]/30 pb-2'>
                       {children}
                     </h1>
                   ),
-                  h2: ({ children }) => <h2 className='text-xl font-semibold text-gray-800 mb-3 mt-6'>{children}</h2>,
-                  h3: ({ children }) => <h3 className='text-lg font-medium text-gray-700 mb-2 mt-4'>{children}</h3>,
-                  h4: ({ children }) => <h4 className='text-base font-medium text-gray-600 mb-2 mt-3'>{children}</h4>,
-                  p: ({ children }) => <p className='mb-4 text-gray-700 leading-relaxed'>{children}</p>,
+                  h2: ({ children }) => <h2 className='text-xl font-semibold text-[#0A1B2A] mb-3 mt-6'>{children}</h2>,
+                  h3: ({ children }) => <h3 className='text-lg font-medium text-[#0A1B2A] mb-2 mt-4'>{children}</h3>,
+                  h4: ({ children }) => <h4 className='text-base font-medium text-[#0A1B2A] mb-2 mt-3'>{children}</h4>,
+                  p: ({ children }) => <p className='mb-4 text-[#0A1B2A] leading-relaxed'>{children}</p>,
                   ul: ({ children }) => (
-                    <div className='mb-4 bg-gray-50 rounded-lg p-4'>
+                    <div className='mb-4 bg-[#33E1FF]/5 rounded-lg p-4'>
                       <ul className='space-y-2'>{children}</ul>
                     </div>
                   ),
                   ol: ({ children }) => (
-                    <div className='mb-4 bg-gray-50 rounded-lg p-4'>
+                    <div className='mb-4 bg-[#33E1FF]/5 rounded-lg p-4'>
                       <ol className='space-y-2 list-decimal list-inside'>{children}</ol>
                     </div>
                   ),
                   li: ({ children }) => (
-                    <li className='flex items-start gap-2 text-gray-700 leading-relaxed'>
-                      <span className='text-blue-500 mt-1'>•</span>
+                    <li className='flex items-start gap-2 text-[#0A1B2A] leading-relaxed'>
+                      <span className='text-[#00B7FF] mt-1'>•</span>
                       <span>{children}</span>
                     </li>
                   ),
                   strong: ({ children }) => (
-                    <strong className='font-semibold text-gray-900 bg-blue-50 px-1 rounded'>{children}</strong>
+                    <strong className='font-semibold text-[#0A1B2A] bg-[#00B7FF]/10 px-1 rounded'>{children}</strong>
                   ),
-                  em: ({ children }) => <em className='italic text-gray-600'>{children}</em>,
+                  em: ({ children }) => <em className='italic text-[#33E1FF]'>{children}</em>,
                   blockquote: ({ children }) => (
-                    <blockquote className='border-l-4 border-blue-300 pl-6 py-3 bg-blue-50/50 rounded-r-lg mb-4 italic'>
+                    <blockquote className='border-l-4 border-[#00B7FF] pl-6 py-3 bg-[#00B7FF]/5 rounded-r-lg mb-4 italic'>
                       {children}
                     </blockquote>
                   ),
                   code: ({ children }) => (
-                    <code className='bg-gray-100 px-2 py-1 rounded text-sm font-mono text-red-600'>{children}</code>
+                    <code className='bg-[#33E1FF]/10 px-2 py-1 rounded text-sm font-mono text-[#4B0082]'>
+                      {children}
+                    </code>
                   ),
                   pre: ({ children }) => (
-                    <pre className='bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4 shadow-inner'>
+                    <pre className='bg-[#0A1B2A]/90 backdrop-blur-sm text-[#33E1FF] p-4 rounded-lg overflow-x-auto mb-4 shadow-inner'>
                       {children}
                     </pre>
                   ),
                   table: ({ children }) => (
                     <div className='overflow-x-auto mb-4'>
-                      <table className='min-w-full border border-gray-200 rounded-lg bg-white shadow-sm'>
+                      <table className='min-w-full border border-[#33E1FF]/20 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm'>
                         {children}
                       </table>
                     </div>
                   ),
                   th: ({ children }) => (
-                    <th className='bg-gray-50 border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900'>
+                    <th className='bg-[#33E1FF]/10 border border-[#33E1FF]/20 px-4 py-3 text-left font-semibold text-[#0A1B2A]'>
                       {children}
                     </th>
                   ),
-                  td: ({ children }) => <td className='border border-gray-200 px-4 py-3 text-gray-700'>{children}</td>,
+                  td: ({ children }) => (
+                    <td className='border border-[#33E1FF]/20 px-4 py-3 text-[#0A1B2A] bg-white/30'>{children}</td>
+                  ),
                 }}
               >
                 {sections.fullContent}
@@ -816,7 +869,7 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
             title={t.sections.specifications}
             content={sections.specifications}
             icon='📝'
-            iconColor='text-blue-500'
+            iconColor='text-[#00B7FF]'
           />
 
           <SectionCard
@@ -830,20 +883,20 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
             title={t.sections.planB}
             content={sections.planB}
             icon='🔄'
-            iconColor='text-orange-500'
+            iconColor='text-[#33E1FF]'
           />
         </div>
 
         {/* Gantt Chart */}
         {gantt.length > 0 && (
-          <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6'>
-            <h3 className='text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2'>
-              <span className='text-purple-500'>📊</span>
+          <div className='bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#33E1FF]/20 p-6'>
+            <h3 className='text-lg font-semibold text-[#0A1B2A] mb-6 flex items-center gap-2'>
+              <span className='text-[#4B0082]'>📊</span>
               Planning Gantt - Roadmap du Projet
             </h3>
-            <div className='mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border-l-4 border-purple-400'>
-              <p className='text-sm text-gray-700'>
-                <strong className='text-purple-700'>📋 Aperçu:</strong> Ce diagramme de Gantt présente la planification
+            <div className='mb-4 p-4 bg-gradient-to-r from-[#4B0082]/10 to-[#00B7FF]/10 rounded-lg border-l-4 border-[#4B0082]'>
+              <p className='text-sm text-[#0A1B2A]'>
+                <strong className='text-[#4B0082]'>📋 Aperçu:</strong> Ce diagramme de Gantt présente la planification
                 détaillée du projet avec {gantt.length} tâche{gantt.length > 1 ? 's' : ''} identifiée
                 {gantt.length > 1 ? 's' : ''}.
               </p>
@@ -887,10 +940,10 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                     strokeWidth: 1,
                   },
                   innerGridTrack: {
-                    fill: '#f8fafc',
+                    fill: '#f8fdff',
                   },
                   innerGridDarkTrack: {
-                    fill: '#f1f5f9',
+                    fill: '#f0f9ff',
                   },
                   arrow: {
                     angle: 100,
@@ -900,11 +953,11 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                   labelStyle: {
                     fontName: 'Arial',
                     fontSize: 12,
-                    color: '#374151',
+                    color: '#0A1B2A',
                   },
                   sortTasks: false,
                 },
-                backgroundColor: '#ffffff',
+                backgroundColor: 'rgba(255, 255, 255, 0.5)',
                 fontSize: 12,
                 fontName: 'Arial',
               }}
@@ -915,21 +968,21 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
               {gantt.slice(0, 6).map((task, index) => (
                 <div
                   key={index}
-                  className='bg-gray-50 rounded-lg p-3 border-l-4 border-purple-400'
+                  className='bg-[#33E1FF]/5 rounded-lg p-3 border-l-4 border-[#4B0082]'
                 >
-                  <h4 className='font-medium text-gray-800 text-sm mb-1'>
+                  <h4 className='font-medium text-[#0A1B2A] text-sm mb-1'>
                     {task.name || task.text || `Tâche ${index + 1}`}
                   </h4>
-                  <div className='text-xs text-gray-600 space-y-1'>
+                  <div className='text-xs text-[#0A1B2A] space-y-1'>
                     {task.resource && (
                       <div className='flex items-center gap-1'>
-                        <span className='text-blue-500'>👤</span>
+                        <span className='text-[#00B7FF]'>👤</span>
                         <span>{task.resource}</span>
                       </div>
                     )}
                     {task.duration && (
                       <div className='flex items-center gap-1'>
-                        <span className='text-orange-500'>⏱️</span>
+                        <span className='text-[#33E1FF]'>⏱️</span>
                         <span>
                           {task.duration} jour{task.duration > 1 ? 's' : ''}
                         </span>
@@ -937,7 +990,7 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
                     )}
                     {task.progress !== undefined && (
                       <div className='flex items-center gap-1'>
-                        <span className='text-green-500'>📈</span>
+                        <span className='text-[#4B0082]'>📈</span>
                         <span>{task.progress}% complété</span>
                       </div>
                     )}
@@ -946,8 +999,8 @@ export default function ProjectResults({ onBack, language }: ProjectResultsProps
               ))}
 
               {gantt.length > 6 && (
-                <div className='bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-3 flex items-center justify-center text-center'>
-                  <div className='text-purple-700'>
+                <div className='bg-gradient-to-br from-[#4B0082]/10 to-[#00B7FF]/10 rounded-lg p-3 flex items-center justify-center text-center'>
+                  <div className='text-[#4B0082]'>
                     <div className='text-xl mb-1'>📋</div>
                     <div className='text-xs font-medium'>+{gantt.length - 6} autres tâches</div>
                   </div>
